@@ -7,8 +7,7 @@ THREE.VRControls = function ( object, callback ) {
 
 	var scope = this;
 
-	// Allow for multiple VR input devices.
-	var vrInputs = [];
+	var vrInput;
 
 	var onVRDevices = function ( devices ) {
 
@@ -18,7 +17,8 @@ THREE.VRControls = function ( object, callback ) {
 
 			if ( device instanceof PositionSensorVRDevice ) {
 
-				vrInputs.push( devices[ i ] );
+				vrInput = devices[ i ];
+				return; // We keep the first we encounter
 
 			}
 
@@ -49,37 +49,29 @@ THREE.VRControls = function ( object, callback ) {
 
 	this.update = function () {
 
-	  for ( var i = 0; i < vrInputs.length; i++ ) {
+		if ( vrInput === undefined ) return;
 
-	    var vrInput = vrInputs[ i ];
+		var state = vrInput.getState();
 
-	    var state = vrInput.getState();
+		if ( state.orientation !== null ) {
 
-	    if ( state.orientation !== null ) {
+			object.quaternion.copy( state.orientation );
 
-	      object.quaternion.copy( state.orientation );
+		}
 
-	    }
+		if ( state.position !== null ) {
 
-	    if ( state.position !== null ) {
+			object.position.copy( state.position ).multiplyScalar( scope.scale );
 
-	      object.position.copy( state.position ).multiplyScalar( scope.scale );
-
-	    }
-
-	  }
+		}
 
 	};
 
 	this.zeroSensor = function () {
 
-	  for ( var i = 0; i < vrInputs.length; i++ ) {
+		if ( vrInput === undefined ) return;
 
-	    var vrInput = vrInputs[ i ];
-
-	    vrInput.zeroSensor();
-
-	  }
+		vrInput.zeroSensor();
 
 	};
 
