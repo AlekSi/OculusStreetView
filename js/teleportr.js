@@ -23,6 +23,10 @@ window.startSpeechRecognizr = function(key){
     bufferSize: 2048,
     errorCallback: function(msg) {console.log(msg);},
     dataCallback: function(text, uttr, merge) {
+      if (text.length == 0) {
+        return;
+      }
+
       console.log(text);
       if (uttr) {
         $('#content_uttr').append(' ' + text);
