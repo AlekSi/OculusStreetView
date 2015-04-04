@@ -10,8 +10,7 @@ window.generateUUID = function() {
 }
 
 window.startSpeechRecognizr = function(key){
-  var phrase_start = /Хочу (?:в|на|к)/i;
-  var matcher = /Хочу (во?|на|к)(.*)/i;
+  var matcher = /Хочу (в|во|на|к) (.+)/i;
   var uuid = window.generateUUID();
   var dict = new webspeechkit.Dictation("wss://webasr.yandex.net/asrsocket.ws?topic=map", uuid, key);
   var tts = new webspeechkit.Tts({key: key, emotion: 'evil', speaker: 'jane'});
@@ -21,7 +20,9 @@ window.startSpeechRecognizr = function(key){
   dict.start({
     format: webspeechkit.FORMAT.PCM44,
     bufferSize: 2048,
-    errorCallback: function(msg) {console.log(msg);},
+    errorCallback: function(msg) {
+      console.log(msg);
+    },
     dataCallback: function(text, uttr, merge) {
       if (text.length == 0) {
         return;
@@ -32,7 +33,7 @@ window.startSpeechRecognizr = function(key){
         $('#content_uttr').append(' ' + text);
       }
 
-      if(!processing && uttr && phrase_start.test(text)){
+      if(!processing && uttr && matcher.test(text)){
         var place = text.match(matcher);
         if(place.length < 3) {
           return false;
