@@ -11,10 +11,10 @@ var DEFAULT_LOCATION = { lat: 55.735349, lng: 37.587783 };
 var USE_TRACKER = false;
 var GAMEPAD_SPEED = 0.04;
 var DEADZONE = 0.2;
-var SHOW_SETTINGS = true;
+var SHOW_SETTINGS = false;
 var NAV_DELTA = 45;
 var FAR = 1000;
-var USE_DEPTH = true;
+var USE_DEPTH = false;
 var WORLD_FACTOR = 1.0;
 
 // Globals
