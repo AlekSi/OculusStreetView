@@ -28,40 +28,38 @@ window.startSpeechRecognizr = function(key){
         return;
       }
 
-      console.log(text);
-      if (uttr) {
-        $('#content_uttr').append(' ' + text);
-      }
+      console.log(text, uttr, merge);
 
-      if(!processing && uttr && matcher.test(text)){
+      if(!processing && uttr && matcher.test(text)) {
         var place = text.match(matcher);
         if(place.length < 3) {
           return false;
         }
         dict.pause();
 
-        preposition = place[1]
-        place = place[2];
+        preposition = place[1].trim();
+        place = place[2].trim();
         processing = true;
-        $.getJSON("http://geocode-maps.yandex.ru/1.x/?format=json&geocode="+place.trim(), function(data){
-          if(parseInt(data.response.GeoObjectCollection.metaDataProperty.GeocoderResponseMetaData.found) == 0) {
-            tts.say("Не смогли найти "+place.trim(), function(){
-              processing = false;
-              dict.onstart()
-            }, {emotion: 'sad', speaker: 'jane'});
+
+        $.getJSON("http://geocode-maps.yandex.ru/1.x/?format=json&geocode=" + place, function(data) {
+          if (parseInt(data.response.GeoObjectCollection.metaDataProperty.GeocoderResponseMetaData.found) == 0) {
+            tts.say("Не смогли найти " + place, function() {
+                processing = false;
+                dict.onstart();
+              }, {emotion: 'sad', speaker: 'jane'});
             return;
           }
 
           lonlat = data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(" ");
           travelTo(lonlat[0], lonlat[1]);
-          tts.say("Телепортирую "+ preposition.trim() +" "+place.trim(), function(){
-            console.log("Озвучила");
-            processing = false;
-            dict.onstart()
-          }, {emotion: 'good', speaker: 'jane'});
+          tts.say("Телепортирую "+ preposition + " " + place, function() {
+              processing = false;
+              dict.onstart();
+            }, {emotion: 'good', speaker: 'jane'});
         });
+
         return;
-        }
+      }
     },
     infoCallback: function(info) {
         $('#bytes_send').html(info.send_bytes);
