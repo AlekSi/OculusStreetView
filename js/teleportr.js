@@ -61,18 +61,13 @@ window.startSpeechRecognizr = function(key){
         return;
       }
     },
-    infoCallback: function(info) {
-        $('#bytes_send').html(info.send_bytes);
-        $('#packages_send').html(info.send_packages);
-        $('#processed').html(info.processed);
-    },
     punctuation: false,
     vad: true,
     speechStart: function() {
-      $('#pack').html('Speech started!');
+      console.log("speechStart");
     },
     speechEnd: function() {
-      $('#pack').html('Speech ended!');
+      console.log("speechEnd");
     }
   });
 }
