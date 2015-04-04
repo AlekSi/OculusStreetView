@@ -7,7 +7,7 @@
 // Parameters
 // ----------------------------------------------
 var QUALITY = 3;
-var DEFAULT_LOCATION = { lat:44.301945982379095,  lng:9.211585521697998 };
+var DEFAULT_LOCATION = { lat: 55.735349, lng: 37.587783 };
 var USE_TRACKER = false;
 var GAMEPAD_SPEED = 0.04;
 var DEADZONE = 0.2;
@@ -96,7 +96,7 @@ function initWebGL() {
   vrmgr = new WebVRManager(effect);
 
   var viewer = $('#viewer');
-  viewer.append(renderer.domElement); 
+  viewer.append(renderer.domElement);
 }
 
 function initControls() {
