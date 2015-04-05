@@ -87,5 +87,6 @@ window.startSpeechRecognizr = function(key){
 
 window.travelTo = function(lon, lat) {
   panoLoader.load(new google.maps.LatLng(lat, lon));
+  panoLoader.loading = false;
   console.log("Lon: "+ lon + " Lat: " + lat);
 }

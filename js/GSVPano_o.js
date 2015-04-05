@@ -1,6 +1,6 @@
 /*
 GSVPano.js - Google Street View Panorama lib
-http://www.clicktorelease.com/code/street/ 
+http://www.clicktorelease.com/code/street/
 
 License
 
