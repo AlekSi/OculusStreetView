@@ -12,7 +12,7 @@ window.generateUUID = function() {
 window.startSpeechRecognizr = function(key){
   var matcher = /Хочу (в|во|на|к) (.+)/i;
   var uuid = window.generateUUID();
-  var dict = new webspeechkit.Dictation("wss://webasr.yandex.net/asrsocket.ws?topic=map", uuid, key);
+  var dict = new webspeechkit.Dictation("wss://webasr.yandex.net/asrsocket.ws?topic=maps", uuid, key);
   var tts = new webspeechkit.Tts({key: key, emotion: 'evil', speaker: 'jane'});
   var processing = false;
   console.log(key);
