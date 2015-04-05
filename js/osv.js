@@ -27,6 +27,11 @@ var navList = [];
 var headingVector = new THREE.Euler();
 var gamepadMoveVector = new THREE.Vector3();
 
+// Particles
+// ----------------------------------------------
+var geometry;
+var particle;
+
 // Utility function
 // ----------------------------------------------
 function angleRangeDeg(angle) {
@@ -58,14 +63,15 @@ function initWebGL() {
 
   // Create camera
   camera = new THREE.PerspectiveCamera( 60, WIDTH/HEIGHT, 0.1, FAR );
-  camera.target = new THREE.Vector3( 1, 0, 0 );
-
+  camera.position.x = 0;
+  camera.position.y = 0;
+  camera.rotation.y = - Math.PI;
   controls  = new THREE.VRControls(camera);
 
   scene.add( camera );
 
   // Add projection sphere
-  projSphere = new THREE.Mesh( new THREE.SphereGeometry( 500, 512, 256, 0, Math.PI * 2, 0, Math.PI), new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture('placeholder.png'), side: THREE.DoubleSide}) );
+  projSphere = new THREE.Mesh( new THREE.SphereGeometry( 500, 64, 32, 0, Math.PI * 2, 0, Math.PI), new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture('placeholder.png'), side: THREE.DoubleSide}) );
   projSphere.geometry.dynamic = true;
   scene.add( projSphere );
 
@@ -77,6 +83,8 @@ function initWebGL() {
   progBar = new THREE.Mesh( new THREE.BoxGeometry(1.0,0.1,0.1), new THREE.MeshBasicMaterial({color: 0x0000ff}));
   progBar.translateZ(0.2);
   progBarContainer.add(progBar);
+
+  startTeleportation();
 
   // Create render
   try {
@@ -358,7 +366,38 @@ function moveToNextPlace() {
   }
 }
 
+function startTeleportation() {
+  var geometry = new THREE.Geometry();
+  var count = 200;
+  for ( i = 0; i < count; i ++ ) {
+
+    var vertex = new THREE.Vector3();
+    vertex.x = (Math.random()*2-1) * 20;
+    vertex.y = (Math.random()*2-1) * 20;
+    vertex.z = (Math.random()*2-1) * 20;
+    geometry.vertices.push( vertex );
+  }
+
+  var materials = new THREE.PointCloudMaterial({ size: 2, map: THREE.ImageUtils.loadTexture('images/bobuk.jpeg') });
+  particle = new THREE.PointCloud(geometry, materials);
+  scene.add(particle);
+}
+
+function stopTeleportation() {
+  particle.material.visible = false;
+  particle.material.needsUpdate = true;
+  scene.remove(particle)
+}
+
 function render() {
+  if(particle.rotation.y + Math.PI / (180 * 60) < 2000){
+    particle.rotation.y += (particle.rotation.y + Math.PI / (180 * 60)) / 60;
+  } else {
+    particle.rotation.y = 0;
+    stopTeleportation();
+  }
+
+
   if (vrmgr.isVRMode()) {
     effect.render( scene, camera );
   }
