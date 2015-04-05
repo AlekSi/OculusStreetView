@@ -64,9 +64,6 @@ function initWebGL() {
 
   // Create camera
   camera = new THREE.PerspectiveCamera( 60, WIDTH/HEIGHT, 0.1, FAR );
-  camera.position.x = 0;
-  camera.position.y = 0;
-  camera.rotation.y = - Math.PI;
   controls  = new THREE.VRControls(camera);
 
   scene.add( camera );
@@ -77,13 +74,13 @@ function initWebGL() {
   scene.add( projSphere );
 
   // Add Progress Bar
-  progBarContainer = new THREE.Mesh( new THREE.BoxGeometry(1.2,0.2,0.1), new THREE.MeshBasicMaterial({color: 0xaaaaaa}));
-  progBarContainer.translateZ(-3);
-  camera.add( progBarContainer );
+  // progBarContainer = new THREE.Mesh( new THREE.BoxGeometry(1.2,0.2,0.1), new THREE.MeshBasicMaterial({color: 0xaaaaaa}));
+  // progBarContainer.translateZ(-3);
+  // camera.add( progBarContainer );
 
-  progBar = new THREE.Mesh( new THREE.BoxGeometry(1.0,0.1,0.1), new THREE.MeshBasicMaterial({color: 0x0000ff}));
-  progBar.translateZ(0.2);
-  progBarContainer.add(progBar);
+  // progBar = new THREE.Mesh( new THREE.BoxGeometry(1.0,0.1,0.1), new THREE.MeshBasicMaterial({color: 0x0000ff}));
+  // progBar.translateZ(0.2);
+  // progBarContainer.add(progBar);
 
   // Create render
   try {
@@ -113,81 +110,81 @@ function initControls() {
   var lastSpaceKeyTime = new Date(),
       lastCtrlKeyTime = lastSpaceKeyTime;
 
-  $(document).keydown(function(e) {
-    //console.log(e.keyCode);
-    switch(e.keyCode) {
-      case 32: // Space
-        var spaceKeyTime = new Date();
-        if (spaceKeyTime-lastSpaceKeyTime < 300) {
-          $('.ui').toggle(200);
-        }
-        lastSpaceKeyTime = spaceKeyTime;
-        break;
-      case 17: // Ctrl
-        var ctrlKeyTime = new Date();
-        if (ctrlKeyTime-lastCtrlKeyTime < 300) {
-          moveToNextPlace();
-        }
-        lastCtrlKeyTime = ctrlKeyTime;
-        break;
-      case 18: // Alt
-        USE_DEPTH = !USE_DEPTH;
-        $('#depth').prop('checked', USE_DEPTH);
-        setSphereGeometry();
-        break;
-    }
-  });
+  // $(document).keydown(function(e) {
+  //   //console.log(e.keyCode);
+  //   switch(e.keyCode) {
+  //     case 32: // Space
+  //       var spaceKeyTime = new Date();
+  //       if (spaceKeyTime-lastSpaceKeyTime < 300) {
+  //         $('.ui').toggle(200);
+  //       }
+  //       lastSpaceKeyTime = spaceKeyTime;
+  //       break;
+  //     case 17: // Ctrl
+  //       var ctrlKeyTime = new Date();
+  //       if (ctrlKeyTime-lastCtrlKeyTime < 300) {
+  //         moveToNextPlace();
+  //       }
+  //       lastCtrlKeyTime = ctrlKeyTime;
+  //       break;
+  //     case 18: // Alt
+  //       USE_DEPTH = !USE_DEPTH;
+  //       $('#depth').prop('checked', USE_DEPTH);
+  //       setSphereGeometry();
+  //       break;
+  //   }
+  // });
 
-  // Mouse
-  // ---------------------------------------
-  var viewer = $('#viewer');
+  // // Mouse
+  // // ---------------------------------------
+  // var viewer = $('#viewer');
 
-  viewer.dblclick(function() {
-    moveToNextPlace();
-  });
+  // viewer.dblclick(function() {
+  //   moveToNextPlace();
+  // });
 
   // Gamepad
   // ---------------------------------------
-  gamepad = new Gamepad();
-  gamepad.bind(Gamepad.Event.CONNECTED, function(device) {
-    console.log("Gamepad CONNECTED");
-  });
+  // gamepad = new Gamepad();
+  // gamepad.bind(Gamepad.Event.CONNECTED, function(device) {
+  //   console.log("Gamepad CONNECTED");
+  // });
 
-  gamepad.bind(Gamepad.Event.BUTTON_DOWN, function(e) {
-    if (e.control == "FACE_2") {
-      $('.ui').toggle(200);
-    }
-  });
+  // gamepad.bind(Gamepad.Event.BUTTON_DOWN, function(e) {
+  //   if (e.control == "FACE_2") {
+  //     $('.ui').toggle(200);
+  //   }
+  // });
 
-  // Look for tick event so that we can hold down the FACE_1 button and
-  // continually move in the current direction
-  gamepad.bind(Gamepad.Event.TICK, function(gamepads) {
-    // Multiple calls before next place has finished loading do not matter
-    // GSVPano library will ignore these
-    if (gamepads[0].state.FACE_1 === 1) {
-      moveToNextPlace();
-    }
-  });
+  // // Look for tick event so that we can hold down the FACE_1 button and
+  // // continually move in the current direction
+  // gamepad.bind(Gamepad.Event.TICK, function(gamepads) {
+  //   // Multiple calls before next place has finished loading do not matter
+  //   // GSVPano library will ignore these
+  //   if (gamepads[0].state.FACE_1 === 1) {
+  //     moveToNextPlace();
+  //   }
+  // });
 
-  gamepad.bind(Gamepad.Event.AXIS_CHANGED, function(e) {
+  // gamepad.bind(Gamepad.Event.AXIS_CHANGED, function(e) {
 
-    // ignore deadzone
-    var value = e.value;
-    if (value < -DEADZONE) value = value + DEADZONE;
-    else if(value > DEADZONE) value = value - DEADZONE;
-    else value = 0;
+  //   // ignore deadzone
+  //   var value = e.value;
+  //   if (value < -DEADZONE) value = value + DEADZONE;
+  //   else if(value > DEADZONE) value = value - DEADZONE;
+  //   else value = 0;
 
-    if (e.axis == "LEFT_STICK_X") {
-      gamepadMoveVector.y = -value*GAMEPAD_SPEED;
-    }
-    else if (e.axis == "LEFT_STICK_Y") {
-      gamepadMoveVector.x = -value*GAMEPAD_SPEED;
-    }
-  });
+  //   if (e.axis == "LEFT_STICK_X") {
+  //     gamepadMoveVector.y = -value*GAMEPAD_SPEED;
+  //   }
+  //   else if (e.axis == "LEFT_STICK_Y") {
+  //     gamepadMoveVector.x = -value*GAMEPAD_SPEED;
+  //   }
+  // });
 
-  if (!gamepad.init()) {
-    //console.log("Gamepad not supported");
-  }
+  // if (!gamepad.init()) {
+  //   //console.log("Gamepad not supported");
+  // }
 }
 
 function initGui()
@@ -211,17 +208,17 @@ function initPano() {
   panoLoader.setZoom(QUALITY);
 
   panoLoader.onProgress = function( progress ) {
-    if (progress > 0) {
-      progBar.visible = true;
-      progBar.scale = new THREE.Vector3(progress/100.0,1,1);
-    }
-    $(".mapprogress").progressbar("option", "value", progress);
+    // if (progress > 0) {
+    //   progBar.visible = true;
+    //   progBar.scale = new THREE.Vector3(progress/100.0,1,1);
+    // }
+    // $(".mapprogress").progressbar("option", "value", progress);
 
   };
   panoLoader.onPanoramaData = function( result ) {
-    progBarContainer.visible = true;
-    progBar.visible = false;
-    $('.mapprogress').show();
+    // progBarContainer.visible = true;
+    // progBar.visible = false;
+    // $('.mapprogress').show();
   };
 
   panoLoader.onNoPanoramaData = function( status ) {
@@ -238,14 +235,14 @@ function initPano() {
     projSphere.material.map.needsUpdate = true;
     centerHeading = panoLoader.heading;
 
-    progBarContainer.visible = false;
-    progBar.visible = false;
+    // progBarContainer.visible = false;
+    // progBar.visible = false;
 
-    marker.setMap( null );
-    marker= new google.maps.Marker({ position: this.location.latLng, map: gmap});
-    marker.setMap( gmap);
+    // marker.setMap( null );
+    // marker = new google.maps.Marker({ position: this.location.latLng, map: gmap});
+    // marker.setMap( gmap);
 
-    $('.mapprogress').hide();
+    //$('.mapprogress').hide();
 
     if (window.history) {
       var newUrl = '?lat='+this.location.latLng.lat()+'&lng='+this.location.latLng.lng();
@@ -287,7 +284,7 @@ function setSphereGeometry() {
 }
 
 function initGoogleMap() {
-  $('.mapprogress').progressbar({ value: false });
+  //$('.mapprogress').progressbar({ value: false });
 
   currentLocation = new google.maps.LatLng( DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lng );
 
@@ -295,40 +292,40 @@ function initGoogleMap() {
   mapel.on('mousemove', function (e) {
       e.stopPropagation();
   });
-  gmap = new google.maps.Map(mapel[0], {
-    zoom: 14,
-    center: currentLocation,
-    mapTypeId: google.maps.MapTypeId.HYBRID,
-    streetViewControl: false
-  });
-  google.maps.event.addListener(gmap, 'click', function(event) {
-    panoLoader.load(event.latLng);
-  });
+  // gmap = new google.maps.Map(mapel[0], {
+  //   zoom: 14,
+  //   center: currentLocation,
+  //   mapTypeId: google.maps.MapTypeId.HYBRID,
+  //   streetViewControl: false
+  // });
+  // google.maps.event.addListener(gmap, 'click', function(event) {
+  //   panoLoader.load(event.latLng);
+  // });
 
-  google.maps.event.addListener(gmap, 'center_changed', function(event) {
-  });
-  google.maps.event.addListener(gmap, 'zoom_changed', function(event) {
-  });
-  google.maps.event.addListener(gmap, 'maptypeid_changed', function(event) {
-  });
+  // google.maps.event.addListener(gmap, 'center_changed', function(event) {
+  // });
+  // google.maps.event.addListener(gmap, 'zoom_changed', function(event) {
+  // });
+  // google.maps.event.addListener(gmap, 'maptypeid_changed', function(event) {
+  // });
 
-  svCoverage= new google.maps.StreetViewCoverageLayer();
-  svCoverage.setMap(gmap);
+  // svCoverage= new google.maps.StreetViewCoverageLayer();
+  // svCoverage.setMap(gmap);
 
-  geocoder = new google.maps.Geocoder();
+  // geocoder = new google.maps.Geocoder();
 
-  $('#mapsearch').change(function() {
-      geocoder.geocode( { 'address': $('#mapsearch').val()}, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        gmap.setCenter(results[0].geometry.location);
-      }
-    });
-  }).on('keydown', function (e) {
-    e.stopPropagation();
-  });
+  // $('#mapsearch').change(function() {
+  //     geocoder.geocode( { 'address': $('#mapsearch').val()}, function(results, status) {
+  //     if (status == google.maps.GeocoderStatus.OK) {
+  //       gmap.setCenter(results[0].geometry.location);
+  //     }
+  //   });
+  // }).on('keydown', function (e) {
+  //   e.stopPropagation();
+  // });
 
-  marker = new google.maps.Marker({ position: currentLocation, map: gmap });
-  marker.setMap( gmap );
+  // marker = new google.maps.Marker({ position: currentLocation, map: gmap });
+  // marker.setMap( gmap );
 }
 
 function checkWebVR() {

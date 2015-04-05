@@ -19,7 +19,7 @@ window.startSpeechRecognizr = function(key){
   console.log(uuid);
   dict.start({
     format: webspeechkit.FORMAT.PCM44,
-    bufferSize: 2048,
+    bufferSize: 1024,
     errorCallback: function(msg) {
       console.log(msg);
     },
@@ -71,7 +71,7 @@ window.startSpeechRecognizr = function(key){
       }
     },
     punctuation: false,
-    vad: true,
+    vad: false,
     speechStart: function() {
       console.log("speechStart");
     },
