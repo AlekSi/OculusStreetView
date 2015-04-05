@@ -10,7 +10,7 @@ window.generateUUID = function() {
 }
 
 window.startSpeechRecognizr = function(key){
-  var matcher = /Хочу (в|во|на|к) (.+)/i;
+  var matcher = /Хочу( в| во| на| к)? (.+)/i;
   var uuid = window.generateUUID();
   var dict = new webspeechkit.Dictation("wss://webasr.yandex.net/asrsocket.ws?topic=maps", uuid, key);
   var tts = new webspeechkit.Tts({key: key, emotion: 'evil', speaker: 'jane'});
@@ -37,7 +37,11 @@ window.startSpeechRecognizr = function(key){
         }
         dict.pause();
 
-        preposition = place[1].trim();
+        preposition = place[1];
+        if (preposition === undefined) {
+          preposition = "";
+        }
+        preposition = preposition.trim()
         place = place[2].trim();
         processing = true;
 
