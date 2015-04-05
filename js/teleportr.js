@@ -30,6 +30,10 @@ window.startSpeechRecognizr = function(key){
 
       console.log(text, uttr, merge);
 
+      if (!processing && matcher.test(text)){
+        startTeleportation();
+      }
+
       if(!processing && uttr && matcher.test(text)) {
         var place = text.match(matcher);
         if(place.length < 3) {
@@ -44,22 +48,23 @@ window.startSpeechRecognizr = function(key){
         preposition = preposition.trim()
         place = place[2].trim();
         processing = true;
-
         $.getJSON("http://geocode-maps.yandex.ru/1.x/?format=json&geocode=" + place, function(data) {
           if (parseInt(data.response.GeoObjectCollection.metaDataProperty.GeocoderResponseMetaData.found) == 0) {
             tts.say("Не смогли найти " + place, function() {
                 processing = false;
                 dict.onstart();
               }, {emotion: 'mixed', speaker: 'jane'});
-            return;
+          } else {
+            lonlat = data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(" ");
+
+            tts.say("Телепортирую "+ preposition + " " + place, function() {
+                processing = false;
+                dict.onstart();
+              }, {emotion: 'good', speaker: 'jane'});
+            travelTo(lonlat[0], lonlat[1]);
           }
 
-          lonlat = data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(" ");
-          travelTo(lonlat[0], lonlat[1]);
-          tts.say("Телепортирую "+ preposition + " " + place, function() {
-              processing = false;
-              dict.onstart();
-            }, {emotion: 'good', speaker: 'jane'});
+          setTimeout(function(){stopTeleportation();}, 2000);
         });
 
         return;

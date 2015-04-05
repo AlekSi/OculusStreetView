@@ -31,6 +31,7 @@ var gamepadMoveVector = new THREE.Vector3();
 // ----------------------------------------------
 var geometry;
 var particle;
+var teleporting = false;
 
 // Utility function
 // ----------------------------------------------
@@ -83,8 +84,6 @@ function initWebGL() {
   progBar = new THREE.Mesh( new THREE.BoxGeometry(1.0,0.1,0.1), new THREE.MeshBasicMaterial({color: 0x0000ff}));
   progBar.translateZ(0.2);
   progBarContainer.add(progBar);
-
-  startTeleportation();
 
   // Create render
   try {
@@ -208,7 +207,7 @@ function initGui()
 
 function initPano() {
   panoLoader = new GSVPANO.PanoLoader();
-  panoDepthLoader = new GSVPANO.PanoDepthLoader();
+  //panoDepthLoader = new GSVPANO.PanoDepthLoader();
   panoLoader.setZoom(QUALITY);
 
   panoLoader.onProgress = function( progress ) {
@@ -257,25 +256,25 @@ function initPano() {
       window.history.pushState('','',newUrl);
     }
 
-    panoDepthLoader.load(this.location.pano);
+    //panoDepthLoader.load(this.location.pano);
   };
 
-  panoDepthLoader.onDepthLoad = function() {
-    setSphereGeometry();
-  };
+  // panoDepthLoader.onDepthLoad = function() {
+  //   setSphereGeometry();
+  // };
 }
 
 function setSphereGeometry() {
   var geom = projSphere.geometry;
   var geomParam = geom.parameters;
-  var depthMap = panoDepthLoader.depthMap.depthMap;
+  //var depthMap = panoDepthLoader.depthMap.depthMap;
   var y, x, u, v, radius, i=0;
   for ( y = 0; y <= geomParam.heightSegments; y ++ ) {
     for ( x = 0; x <= geomParam.widthSegments; x ++ ) {
       u = x / geomParam.widthSegments;
       v = y / geomParam.heightSegments;
 
-      radius = USE_DEPTH ? Math.min(depthMap[y*512 + x], FAR) : 500;
+      radius = 500;//USE_DEPTH ? Math.min(depthMap[y*512 + x], FAR) : 500;
 
       var vertex = geom.vertices[i];
       vertex.x = - radius * Math.cos( geomParam.phiStart + u * geomParam.phiLength ) * Math.sin( geomParam.thetaStart + v * geomParam.thetaLength );
@@ -367,6 +366,11 @@ function moveToNextPlace() {
 }
 
 function startTeleportation() {
+  if(teleporting){
+    return;
+  }
+
+  teleporting = true;
   var geometry = new THREE.Geometry();
   var count = 200;
   for ( i = 0; i < count; i ++ ) {
@@ -380,21 +384,23 @@ function startTeleportation() {
 
   var materials = new THREE.PointCloudMaterial({ size: 2, map: THREE.ImageUtils.loadTexture('images/bobuk.jpeg') });
   particle = new THREE.PointCloud(geometry, materials);
+  particle.rotation.y = 10;
   scene.add(particle);
 }
 
 function stopTeleportation() {
+  if(!teleporting){
+    return;
+  }
   particle.material.visible = false;
   particle.material.needsUpdate = true;
   scene.remove(particle)
+  teleporting = false
 }
 
 function render() {
-  if(particle.rotation.y + Math.PI / (180 * 60) < 2000){
+  if(teleporting){
     particle.rotation.y += (particle.rotation.y + Math.PI / (180 * 60)) / 60;
-  } else {
-    particle.rotation.y = 0;
-    stopTeleportation();
   }
 
 
