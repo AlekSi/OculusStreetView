@@ -362,7 +362,7 @@ function moveToNextPlace() {
   }
 }
 
-function startTeleportation() {
+function startBobuk() {
   if(teleporting){
     return;
   }
@@ -385,7 +385,7 @@ function startTeleportation() {
   scene.add(particle);
 }
 
-function stopTeleportation() {
+function stopBobuk() {
   if(!teleporting){
     return;
   }

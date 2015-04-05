@@ -10,7 +10,8 @@ window.generateUUID = function() {
 }
 
 window.startSpeechRecognizr = function(key){
-  var matcher = /Хочу( в| во| на| к)? (.+)/i;
+  var matcher = /(Хочу|Хочет)( в| во| на| к)? (.+)/i;
+  var bobukMatcher = /Бамбук|Боб|Бог /i // :(
   var uuid = window.generateUUID();
   var dict = new webspeechkit.Dictation("wss://webasr.yandex.net/asrsocket.ws?topic=maps", uuid, key);
   var tts = new webspeechkit.Tts({key: key});
@@ -30,23 +31,24 @@ window.startSpeechRecognizr = function(key){
 
       console.log(text, uttr, merge);
 
-      if (!processing && matcher.test(text)){
-        startTeleportation();
+      if (!processing && bobukMatcher.test(text)){
+        startBobuk();
       }
 
       if(!processing && uttr && matcher.test(text)) {
         var place = text.match(matcher);
-        if(place.length < 3) {
+        console.log(place);
+        if(place.length < 4) {
           return false;
         }
         dict.pause();
 
-        preposition = place[1];
+        preposition = place[2];
         if (preposition === undefined) {
           preposition = "";
         }
         preposition = preposition.trim()
-        place = place[2].trim();
+        place = place[3].trim();
         processing = true;
         $.getJSON("http://geocode-maps.yandex.ru/1.x/?format=json&geocode=" + place, function(data) {
           if (parseInt(data.response.GeoObjectCollection.metaDataProperty.GeocoderResponseMetaData.found) == 0) {
@@ -64,7 +66,9 @@ window.startSpeechRecognizr = function(key){
             travelTo(lonlat[0], lonlat[1]);
           }
 
-          setTimeout(function(){stopTeleportation();}, 2000);
+          setTimeout(function() {
+            stopBobuk();
+          }, 1000);
         });
 
         return;
