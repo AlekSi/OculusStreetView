@@ -13,7 +13,7 @@ window.startSpeechRecognizr = function(key){
   var matcher = /Хочу( в| во| на| к)? (.+)/i;
   var uuid = window.generateUUID();
   var dict = new webspeechkit.Dictation("wss://webasr.yandex.net/asrsocket.ws?topic=maps", uuid, key);
-  var tts = new webspeechkit.Tts({key: key, emotion: 'evil', speaker: 'jane'});
+  var tts = new webspeechkit.Tts({key: key});
   var processing = false;
   console.log(key);
   console.log(uuid);
@@ -50,7 +50,7 @@ window.startSpeechRecognizr = function(key){
             tts.say("Не смогли найти " + place, function() {
                 processing = false;
                 dict.onstart();
-              }, {emotion: 'sad', speaker: 'jane'});
+              }, {emotion: 'mixed', speaker: 'jane'});
             return;
           }
 
